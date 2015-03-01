@@ -5,26 +5,35 @@ defmodule Scheherazade.Mixfile do
     [app: :scheherazade,
      version: "0.0.1",
      elixir: "~> 1.0",
-     deps: deps]
+     elixirc_paths: ["lib", "web"],
+     compilers: [:phoenix] ++ Mix.compilers,
+     deps: deps,
+     aliases: aliases]
   end
 
   # Configuration for the OTP application
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger]]
+    [mod: {Scheherazade, []},
+     applications: [:phoenix, :cowboy, :postgrex, :ecto, :logger]]
   end
 
-  # Dependencies can be Hex packages:
+  # Specifies your project dependencies
   #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type `mix help deps` for more examples and options
+  # Type `mix help deps` for examples and options
   defp deps do
-    []
+    [{:phoenix, "~> 0.9.0"},
+     {:cowboy, "~> 1.0"},
+     {:postgrex, "0.7.0"},
+     {:ecto, "~> 0.8.1"}]
+  end
+
+  defp aliases do
+    [:serve, "phoenix.server",
+     :up, "ecto.migrate",
+     :down, "ecto.rollback",
+     :migration, "ecto.gen.migration",
+     :routes, "phoenix.routes"]
   end
 end
