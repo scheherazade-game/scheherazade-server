@@ -5,6 +5,9 @@ config :scheherazade, Scheherazade.Endpoint,
   http: [port: System.get_env("PORT")],
   secret_key_base: System.get_env("SECRET_KEY_BASE")
   
+config :comeonin,
+  pbkdf2_rounds: 100_000
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

@@ -19,6 +19,9 @@ config :scheherazade, Scheherazade.Repo,
   password: "postgres",
   hostname: "localhost"
 
+config :comeonin,
+  pbkdf2_rounds: 100_000
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

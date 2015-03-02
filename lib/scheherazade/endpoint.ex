@@ -23,8 +23,10 @@ defmodule Scheherazade.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_scheherazade_key",
-    signing_salt: "182pCRi4",
-    encryption_salt: "F8+SBcFs"
+    http_only: true,
+    path: "/",
+    signing_salt: System.get_env("SIGNING_SALT") || "182pCRi4",
+    encryption_salt: System.get_env("ENCRYPTION_SALT") || "F8+SBcFs"
 
   plug :router, Scheherazade.Router
 end

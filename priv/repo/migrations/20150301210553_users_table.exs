@@ -9,6 +9,6 @@ defmodule Scheherazade.Repo.Migrations.UsersTable do
       add :password, :text
       timestamps
     end
-    create index(:user, [:email])
+    create index(:user, [:email], unique: true)
   end
 end

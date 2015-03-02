@@ -10,6 +10,13 @@ defmodule Scheherazade.Router do
 
   pipeline :api do
     plug :accepts, ~w(json)
+    plug :fetch_session
+  end
+
+  scope "/api", Scheherazade do
+    pipe_through :api
+
+    resources "/users", UserController
   end
 
   scope "/", Scheherazade do
@@ -18,8 +25,4 @@ defmodule Scheherazade.Router do
     get "*anything", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", Scheherazade do
-  #   pipe_through :api
-  # end
 end

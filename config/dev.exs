@@ -5,6 +5,9 @@ config :scheherazade, Scheherazade.Endpoint,
   debug_errors: true,
   cache_static_lookup: false
 
+config :comeonin,
+  pbkdf2_rounds: 1_000
+
 # Enables code reloading for development
 config :phoenix, :code_reloader, true
 

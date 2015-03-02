@@ -16,7 +16,7 @@ defmodule Scheherazade.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [mod: {Scheherazade, []},
-     applications: [:phoenix, :cowboy, :postgrex, :ecto, :logger]]
+     applications: [:phoenix, :cowboy, :postgrex, :ecto, :comeonin, :logger]]
   end
 
   # Specifies your project dependencies
@@ -26,14 +26,15 @@ defmodule Scheherazade.Mixfile do
     [{:phoenix, "~> 0.9.0"},
      {:cowboy, "~> 1.0"},
      {:postgrex, "0.7.0"},
-     {:ecto, "~> 0.8.1"}]
+     {:ecto, "~> 0.8.1"},
+     {:comeonin, "~> 0.2"}]
   end
 
   defp aliases do
-    [:serve, "phoenix.server",
-     :up, "ecto.migrate",
-     :down, "ecto.rollback",
-     :migration, "ecto.gen.migration",
-     :routes, "phoenix.routes"]
+    [serve: "phoenix.server",
+     up: "ecto.migrate",
+     down: "ecto.rollback",
+     migration: "ecto.gen.migration",
+     routes: "phoenix.routes"]
   end
 end
