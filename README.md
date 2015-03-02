@@ -3,7 +3,7 @@
 ## Getting started
 
 Scheherazade is an [Elixir](http://elixir-lang.org)-based application. It
-uses the [Phoenix Web Framework](http://www.phoenixframework.org/)for
+uses the [Phoenix Web Framework](http://www.phoenixframework.org) for
 its backend API layer and [CanJS](http://canjs.com) for its frontend.
 
 0. [Install Elixir](http://elixir-lang.org/install.html)
