@@ -11,70 +11,39 @@ defmodule Scheherazade.User.Query do
     end
   end
 
-  def create(%{"email" => email,
-               "password" => rawPass,
-               "display_name" => displayName}) do
+  def create(params) do
     with_transaction! do
-      case find_one email do
-        nil ->
-          %User{email: email,
-                password: Crypt.hashpwsalt(rawPass),
-                display_name: displayName}
-          |> Repo.insert
-        %User{} ->
-          throw {:error, :already_exists}
-      end
+      Repo.insert User.changeset!(%User{}, params)
     end
   end
 
-  def update(params = %{"id" => email}) do
+  def update(email, params) do
     with_transaction! do
-      case find_one email do
-        nil ->
-          throw {:error, :not_found}
-        user = %User{} ->
-          %{user |
-            email: Map.get(params, "email", user.email),
-            password: if Map.get(params, "password") do
-                        Crypt.hashpwsalt(params.password)
-                      else
-                        user.password
-                      end,
-            display_name: Map.get(params, "display_name", user.display_name)}
-          |> Repo.insert
-      end
+      Repo.update User.changeset!(find_one!(email), params)
     end
   end
 
   def delete(email) do
     with_transaction! do
-      case find_one(email) do
-        nil ->
-          throw {:error, :not_found}
-        user = %User{} ->
-          Repo.delete(user)
-      end
+      Repo.delete find_one!(email)
     end
   end
 
-  def find_one(email) do
-    Repo.one from u in User, where: u.email == ^email
-  end
-  def find_one(email, password) do
+  def find_one(email), do: Repo.one find_one_query(email)
+  def find_one!(email), do: Repo.one! find_one_query(email)
+  def find_one_query(email), do: (from u in User, where: u.email == ^email)
+
+  def find_all(), do: Repo.all User
+
+  def check_password(email, password) do
     case find_one email do
+      user = %User{password: hashed} ->
+        Crypt.checkpw(password, hashed) && user
       nil ->
         # NOTE: The dummy check protects against detection of users by
-        #       checking timings.
+        #       checking timings. This function always returns false.
         Crypt.dummy_checkpw
-        nil
-      user = %User{password: hashed} ->
-        if Crypt.checkpw(password, hashed) do
-          user
-        end
     end
   end
 
-  def find_all() do
-    Repo.all User
-  end
 end

@@ -10,33 +10,37 @@ defmodule Scheherazade.UserController do
   end
 
   def show(conn, %{"id" => email}) do
-    case Query.find_one email do
-      nil ->
+    try do
+      ok(conn, Query.find_one!(email) |> scrub)
+    rescue
+      Ecto.NoResultsError ->
         not_found conn
-      user = %User{} ->
-        ok(conn, scrub user)
     end
   end
 
-  def create(conn, params = %{"email" => _,
-                              "password" => _,
-                              "display_name" => _}) do
+  def create(conn, params) do
     try do
       ok(conn, Query.create(params) |> scrub)
     catch
-      {:error, :already_exists} ->
-        error conn, :conflict, "A user with that email already exists"
+      {:errors, errors} ->
+        error conn, :unprocessable_entity, errors
     end
   end
-  def create(conn, _params) do
-    error conn, :unprocessable_entity, "Invalid user"
+
+  def update(conn, params = %{"id" => email}) do
+    try do
+      ok(conn, Query.update(email, params) |> scrub)
+    catch
+      {:errors, errors} ->
+        error conn, :unprocessable_entity, errors
+    end
   end
 
   def delete(conn, %{"id" => email}) do
     try do
       ok(conn, Query.delete(email) |> scrub)
-    catch
-      {:error, :not_found} ->
+    rescue
+      Ecto.NoResultsError ->
         not_found conn
     end
   end
@@ -44,10 +48,9 @@ defmodule Scheherazade.UserController do
   #
   # Util
   #
-
   defp scrub(user) do
     user |> Map.take([
-      :id, :email, :display_name, :full_name
+      :email, :display_name, :full_name
     ])
   end
 
@@ -57,14 +60,14 @@ defmodule Scheherazade.UserController do
     |> json %{data: data}
   end
 
-  defp error(conn, status, msg) do
-    conn
-    |> put_status(status)
-    |> json %{error: msg}
+  defp not_found(conn) do
+    error conn, :not_found, []
   end
 
-  defp not_found(conn) do
-    error conn, :not_found, "No such user exists"
+  defp error(conn, status, errors) do
+    conn
+    |> put_status(status)
+    |> json %{errors: errors}
   end
 
 end
